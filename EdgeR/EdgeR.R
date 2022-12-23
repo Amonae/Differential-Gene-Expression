@@ -105,12 +105,6 @@ plotBCV(dge_tmm.disp) # Note there is a downward trend in coefficient of variati
 
 #GLM dispersion estimates
 
-#Power method
-dge_tmm_c.disp = estimateGLMCommonDisp(dge_tmm,design, verbose=T) # estimating common dispersion based on glm model
-dge_tmm_tr.disp = estimateGLMTrendedDisp(dge_tmm_c.disp,design, method="power") #trended dispersion
-dge_tmm_tag.disp = estimateGLMTagwiseDisp(dge_tmm_tr.disp,design) #tagwise dispersion
-plotBCV(dge_tmm_tag.disp)
-
 #bin.spline method
 dge_tmm_c.disp = estimateGLMCommonDisp(dge_tmm,design, verbose=T) # estimating common dispersion based on glm model
 dge_tmm_tr.disp = estimateGLMTrendedDisp(dge_tmm_c.disp,design, method="bin.spline") #trended dispersion
@@ -155,40 +149,30 @@ sum(abs(NHBE_dge_list))
 gene_list = list(EstDisp, GLM_Trend, GLM_Tag)
 ggVennDiagram(gene_list, label_alpha = 0, category.names = c('EstDisp', 'GLM_Trend', 'GLM_Tag'))+ ggplot2::scale_fill_gradient(low="white",high = "blue")
 
+### No real difference in dispersion estimate method. Conintuing with EstDisp
+
+# dge_tmm.disp = estimateDisp(dge_tmm, design, verbose=T, robust = T)
+#fit = glmQLFit(dge_tmm.disp, design)
+#NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+#topTags(NHBE_dge, n=10)
+#NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 
 
-
-
-
-### Generating a list of DEGs 
-### trended glm dispersion  method="bin.spline"
-
-NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
-summary(NHBE_dge_list)
+#TMM = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])  * Please note, this is the same as the EstDisp object
 
 # Viewing Smear plot
-TMM = rownames(dge1)[as.logical(NHBE_dge_list)]
-length(TMM) # number of DEGs
+
 
 plotSmear(NHBE_dge, de.tags=TMM)
 abline(h = c(-2, 2), col = "blue")
 
 # Exploring how normalization affects DGE list in NHBE cells only
-
-#TMM (done above)
-#dge1 = estimateGLMCommonDisp(dge_tmm,design, verbose=T) # estimating common dispersion based on glm model
-#dge1 = estimateGLMTrendedDisp(dge1,design, method="bin.spline") #trended dispersion
-#fit = glmQLFit(dge1, design)
-#NHBE_dge = glmLRT(fit, contrast=c(1,-1,rep(0,8)))
-#NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
-TMM = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])
-sum(abs(NHBE_dge_list)) # 142
+## TMM was done above
 
 # RLE
-dge1 = estimateGLMCommonDisp(dge_rle,design, verbose=T) # estimating common dispersion based on glm model
-dge1 = estimateGLMTrendedDisp(dge1,design, method="bin.spline") #trended dispersion
+dge1 = estimateDisp(dge_rle,design, robust = T) 
 fit = glmQLFit(dge1, design)
-NHBE_dge = glmLRT(fit, contrast=c(1,-1,rep(0,8)))
+NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 RLE = rownames(dge1)[as.logical(NHBE_dge_list)]
 length(RLE) # number of DEGs
@@ -202,7 +186,7 @@ abline(h = c(-2, 2), col = "blue")
 dge1 = estimateGLMCommonDisp(dge_uq,design, verbose=T) # estimating common dispersion based on glm model
 dge1 = estimateGLMTrendedDisp(dge1,design, method="bin.spline") #trended dispersion
 fit = glmQLFit(dge1, design)
-NHBE_dge = glmLRT(fit, contrast=c(1,-1,rep(0,8)))
+NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 UQ = rownames(dge1)[as.logical(NHBE_dge_list)]
 length(UQ) # number of DEGs
@@ -212,8 +196,6 @@ abline(h = c(-2, 2), col = "blue")
 
 
 # Venn Diagram 
-devtools::install_github("gaospecial/ggVennDiagram")
-library("ggVennDiagram")
 
 gene_list = list(TMM, RLE, UQ)
 ggVennDiagram(gene_list, label_alpha = 0)+ ggplot2::scale_fill_gradient(low="white",high = "blue")
