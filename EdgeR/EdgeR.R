@@ -117,7 +117,7 @@ plotBCV(dge_tmm_tag.disp)
 fit = glmQLFit(dge_tmm.disp, design)
 
 #Viewing pairwise NHBE Mock vs Cov
-NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 topTags(NHBE_dge, n=10)
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 EstDisp = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])
@@ -128,7 +128,7 @@ sum(abs(NHBE_dge_list))
 fit = glmQLFit(dge_tmm_tr.disp, design)
 
 #Viewing pairwise NHBE Mock vs Cov
-NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 topTags(NHBE_dge, n=10)
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 GLM_Trend = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])
@@ -138,7 +138,7 @@ sum(abs(NHBE_dge_list))
 fit = glmQLFit(dge_tmm_tag.disp, design)
 
 #Viewing pairwise NHBE Mock vs Cov
-NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 topTags(NHBE_dge, n=10)
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 GLM_Tag = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])
@@ -153,7 +153,7 @@ ggVennDiagram(gene_list, label_alpha = 0, category.names = c('EstDisp', 'GLM_Tre
 
 # dge_tmm.disp = estimateDisp(dge_tmm, design, verbose=T, robust = T)
 #fit = glmQLFit(dge_tmm.disp, design)
-#NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+#NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 #topTags(NHBE_dge, n=10)
 #NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 
@@ -172,7 +172,7 @@ abline(h = c(-2, 2), col = "blue")
 # RLE
 dge1 = estimateDisp(dge_rle,design, robust = T) 
 fit = glmQLFit(dge1, design)
-NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 RLE = rownames(dge1)[as.logical(NHBE_dge_list)]
 length(RLE) # number of DEGs
@@ -186,7 +186,7 @@ abline(h = c(-2, 2), col = "blue")
 dge1 = estimateGLMCommonDisp(dge_uq,design, verbose=T) # estimating common dispersion based on glm model
 dge1 = estimateGLMTrendedDisp(dge1,design, method="bin.spline") #trended dispersion
 fit = glmQLFit(dge1, design)
-NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 UQ = rownames(dge1)[as.logical(NHBE_dge_list)]
 length(UQ) # number of DEGs
