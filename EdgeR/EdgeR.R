@@ -116,13 +116,14 @@ plotBCV(dge_tmm_tag.disp)
 # dge_tmm.disp = estimateDisp(dge_tmm, design, robust = T)
 fit = glmQLFit(dge_tmm.disp, design)
 
-#Viewing pairwise NHBE Mock vs Cov
+
 NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 topTags(NHBE_dge, n=10)
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 EstDisp = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])
 sum(abs(NHBE_dge_list))
 
+write.csv(NHBE_dge$table, file = "EdgeR_TMM_DEGs.csv")
 
 # dge_tmm_tr.disp = estimateGLMTrendedDisp(dge_tmm_c.disp,design, method="bin.spline")
 fit = glmQLFit(dge_tmm_tr.disp, design)
@@ -151,19 +152,11 @@ ggVennDiagram(gene_list, label_alpha = 0, category.names = c('EstDisp', 'GLM_Tre
 
 ### No real difference in dispersion estimate method. Conintuing with EstDisp
 
-# dge_tmm.disp = estimateDisp(dge_tmm, design, verbose=T, robust = T)
-#fit = glmQLFit(dge_tmm.disp, design)
-#NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
-#topTags(NHBE_dge, n=10)
-#NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
-
-
-#TMM = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])  * Please note, this is the same as the EstDisp object
 
 # Viewing Smear plot
 
 
-plotSmear(NHBE_dge, de.tags=TMM)
+plotSmear(NHBE_dge, de.tags=GLM_Tag)
 abline(h = c(-2, 2), col = "blue")
 
 # Exploring how normalization affects DGE list in NHBE cells only
@@ -177,19 +170,22 @@ NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 RLE = rownames(dge1)[as.logical(NHBE_dge_list)]
 length(RLE) # number of DEGs
 
+write.csv(NHBE_dge$table, file = "EdgeR_RLE_DEGs.csv")
+
 plotSmear(NHBE_dge, de.tags=RLE)
 abline(h = c(-2, 2), col = "blue")
 
 
 
 #UQ
-dge1 = estimateGLMCommonDisp(dge_uq,design, verbose=T) # estimating common dispersion based on glm model
-dge1 = estimateGLMTrendedDisp(dge1,design, method="bin.spline") #trended dispersion
+dge1 = estimateDisp(dge_uq,design, robust = T)
 fit = glmQLFit(dge1, design)
 NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 UQ = rownames(dge1)[as.logical(NHBE_dge_list)]
 length(UQ) # number of DEGs
+
+write.csv(NHBE_dge$table, file = "EdgeR_UQ_DEGs.csv")
 
 plotSmear(NHBE_dge, de.tags=UQ)
 abline(h = c(-2, 2), col = "blue")
