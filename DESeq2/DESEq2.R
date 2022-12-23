@@ -3,7 +3,7 @@ BiocManager::install("apeglm")
 
 head(GSE_data[,1:8])
 head(coldata)
-
+coldata$condition = factor(coldata$condition, levels = c("mock", "covid"))
 
 # Doing DGE analysis for only NHBE cells 
 
@@ -19,6 +19,9 @@ dge_NHBE = results(dds_NHBE)
 dge_NHBE    # Note that the LFC is based on covid vs mock. So positive values represent genes that are upregulated in cells with covid
 
 
+ordered_p1 = dge_NHBE[order(dge_NHBE$pvalue),]
+ordered_p1
+
 # Going to shrink for better visualization and ranking of genes.
 
 dge_NHBE_shrink = lfcShrink(dds_NHBE, coef="condition_covid_vs_mock", type="apeglm")
@@ -32,9 +35,9 @@ summary(dge_NHBE_shrink, alpha = 0.05) # setting the minimum pvalue to < 0.05
 
 sum(dge_NHBE_shrink$padj < 0.05, na.rm=TRUE) # reports how many genes have padj < 0.05
 
-ordered_p = dge_NHBE_shrink[order(dge_NHBE_shrink$pvalue),] # This orders the output by lowest pvalues
+ordered_p2 = dge_NHBE_shrink[order(dge_NHBE_shrink$pvalue),] # This orders the output by lowest pvalues
 
-head(ordered_p, 7) 
+head(ordered_p2, 7) 
 
 plotMA(dge_NHBE_shrink, ylim=c(-2,2))  # This plot shows LFC of genes with significant genes colored blue.
 
@@ -43,3 +46,6 @@ plotMA(dge_NHBE_shrink, ylim=c(-2,2))  # This plot shows LFC of genes with signi
 rld = rlog(dds, blind=FALSE)
 plotPCA(rld)
 
+## Saving results to csv
+dge_NHBE = data.frame(dge_NHBE)
+write.csv(dge_NHBE, file = "DESeq2_DEGs.csv")
