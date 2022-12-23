@@ -65,22 +65,43 @@ plotMDS(dge_uq, col=colors, pch=16)
 
 legend("topleft", legend= unique(groups), pch=16, col=unique(colors), cex = 0.6)
 
+
+# Subsetting and looking at only NHBE cells
+
+NHBE = GSE_data[,1:6]
+groups_NHBE = groups[1:6, drop = T]
+dge = DGEList(NHBE, group = groups_NHBE)
+dim(dge)
+
+## Filtering low count genes
+keep = filterByExpr(dge,group = groups_NHBE)
+dge = dge[keep,keep.lib.size=FALSE]
+dim(dge)
+head(dge$samples)
+
+
+## Calc norm factors
+dge_tmm = calcNormFactors(dge, method="TMM")
+dge_rle = calcNormFactors(dge, method="RLE")
+dge_uq = calcNormFactors(dge, method="upperquartile")
+
+
 ### Estimating dispersion on dge_TMM to start
 # edgeR uses the quantile-adjusted conditional maximum likelihood (qCML) method for experiments with single factor
 
 #Dispersion is a measure of the degree of inter-library variation for a gene
 # Larger dispersions = higher variance between replicates, which reduce power to detect DE.
 
-dge_tmm_c.disp = estimateCommonDisp(dge_tmm, verbose=T) # Common dispersion is the mean dispersion across all genes
-dge_tmm_t.disp = estimateTagwiseDisp(dge_tmm_c.disp) # tagwise dispersion is the deispersion for each gene
-
-
-# Viewing BCV plot
-plotBCV(dge_tmm_t.disp) # Note there is a downward trend in coefficient of variation as cpm increases, so using common dispersion may not be appropriate
-
-# Creating a design matrix for use with glm fit
+# Creating a design matrix 
 design = model.matrix(~ 0 + dge_tmm$samples$group)
 colnames(design) = levels(dge_tmm$samples$group)
+
+# estimating dispersion
+dge_tmm.disp = estimateDisp(dge_tmm, design, robust = T)
+
+# Viewing BCV plot
+plotBCV(dge_tmm.disp) # Note there is a downward trend in coefficient of variation as cpm increases, so using common dispersion may not be appropriate
+
 
 #GLM dispersion estimates
 
@@ -96,30 +117,47 @@ dge_tmm_tr.disp = estimateGLMTrendedDisp(dge_tmm_c.disp,design, method="bin.spli
 dge_tmm_tag.disp = estimateGLMTagwiseDisp(dge_tmm_tr.disp,design) #tagwise dispersion
 plotBCV(dge_tmm_tag.disp)
 
-#DGE
+#DGE Using different dispersion methods
  
-# dge_tmm_c.disp = estimateGLMCommonDisp(dge_tmm,design)
-fit = glmQLFit(dge_tmm_c.disp, design)
+# dge_tmm.disp = estimateDisp(dge_tmm, design, verbose=T, robust = T)
+fit = glmQLFit(dge_tmm.disp, design)
 
 #Viewing pairwise NHBE Mock vs Cov
-NHBE_dge = glmLRT(fit, contrast=c(1,-1,rep(0,8)))
+NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
 topTags(NHBE_dge, n=10)
+NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
+EstDisp = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])
+sum(abs(NHBE_dge_list))
 
 
 # dge_tmm_tr.disp = estimateGLMTrendedDisp(dge_tmm_c.disp,design, method="bin.spline")
 fit = glmQLFit(dge_tmm_tr.disp, design)
 
 #Viewing pairwise NHBE Mock vs Cov
-NHBE_dge = glmLRT(fit, contrast=c(1,-1,rep(0,8)))
+NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
 topTags(NHBE_dge, n=10)
-
+NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
+GLM_Trend = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])
+sum(abs(NHBE_dge_list))
 
 # dge_tmm_tag.disp = estimateGLMTagwiseDisp(dge_tmm_tr.disp,design)
 fit = glmQLFit(dge_tmm_tag.disp, design)
 
 #Viewing pairwise NHBE Mock vs Cov
-NHBE_dge = glmLRT(fit, contrast=c(1,-1,rep(0,8)))
+NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
 topTags(NHBE_dge, n=10)
+NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
+GLM_Tag = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])
+sum(abs(NHBE_dge_list))
+
+#library("ggVennDiagram")
+
+gene_list = list(EstDisp, GLM_Trend, GLM_Tag)
+ggVennDiagram(gene_list, label_alpha = 0, category.names = c('EstDisp', 'GLM_Trend', 'GLM_Tag'))+ ggplot2::scale_fill_gradient(low="white",high = "blue")
+
+
+
+
 
 
 ### Generating a list of DEGs 
