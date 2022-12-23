@@ -295,7 +295,7 @@ plotBCV(dge_tmm_tag.disp)
 # Note. for this step: dge_tmm.disp = estimateDisp(dge_tmm, design, robust = T)
 fit = glmQLFit(dge_tmm.disp, design)
 
-NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+NHBE_dge = glmQLFTest(fit, contrast=c(-1,1)) # Contrast is covid s mock
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 EstDisp = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1]) # Names of DE genes
 length(EstDisp) # Number of DE genes
@@ -307,18 +307,18 @@ length(EstDisp) # Number of DE genes
 topTags(NHBE_dge, n=10) # Genes with 10 lowest pvalues
 ```
 
-    ## Coefficient:  1*mock_NHBE -1*covid_NHBE 
-    ##             logFC   logCPM        F       PValue          FDR
-    ## SAA2    -2.428709 5.437383 540.7592 7.471243e-12 8.994630e-08
-    ## CCL20   -3.148351 4.954443 441.3524 2.658128e-11 1.600060e-07
-    ## IL36G   -2.736126 4.363008 346.9750 1.184557e-10 4.753627e-07
-    ## INHBA   -1.824570 6.515685 281.9283 4.260236e-10 1.282224e-06
-    ## TNFAIP3 -1.616961 7.423374 265.4893 6.158454e-10 1.342959e-06
-    ## S100A8  -1.874895 7.002240 261.9050 6.693043e-10 1.342959e-06
-    ## SPRR2D  -2.987542 4.799459 237.0187 1.231702e-09 1.579843e-06
-    ## KRT6B   -1.554510 7.717157 234.3918 1.318249e-09 1.579843e-06
-    ## SAA1    -2.227944 7.957976 230.6406 1.454322e-09 1.579843e-06
-    ## CFB     -1.860238 5.886831 229.5129 1.498359e-09 1.579843e-06
+    ## Coefficient:  -1*mock_NHBE 1*covid_NHBE 
+    ##            logFC   logCPM        F       PValue          FDR
+    ## SAA2    2.428709 5.437383 540.7592 7.471243e-12 8.994630e-08
+    ## CCL20   3.148351 4.954443 441.3524 2.658128e-11 1.600060e-07
+    ## IL36G   2.736126 4.363008 346.9750 1.184557e-10 4.753627e-07
+    ## INHBA   1.824570 6.515685 281.9283 4.260236e-10 1.282224e-06
+    ## TNFAIP3 1.616961 7.423374 265.4893 6.158454e-10 1.342959e-06
+    ## S100A8  1.874895 7.002240 261.9050 6.693043e-10 1.342959e-06
+    ## SPRR2D  2.987542 4.799459 237.0187 1.231702e-09 1.579843e-06
+    ## KRT6B   1.554510 7.717157 234.3918 1.318249e-09 1.579843e-06
+    ## SAA1    2.227944 7.957976 230.6406 1.454322e-09 1.579843e-06
+    ## CFB     1.860238 5.886831 229.5129 1.498359e-09 1.579843e-06
 
 #### Viewing Smear plot
 
@@ -335,7 +335,7 @@ abline(h = c(-2, 2), col = "blue")
 # dge_tmm_tr.disp = estimateGLMTrendedDisp(dge_tmm_c.disp,design, method="bin.spline")
 fit = glmQLFit(dge_tmm_tr.disp, design)
 
-NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 GLM_Trend = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1]) # Names of DE genes
 length(GLM_Trend) # Number of DE genes
@@ -347,18 +347,18 @@ length(GLM_Trend) # Number of DE genes
 topTags(NHBE_dge, n=10) # Genes with 10 lowest pvalues
 ```
 
-    ## Coefficient:  1*mock_NHBE -1*covid_NHBE 
-    ##             logFC   logCPM        F       PValue          FDR
-    ## SAA2    -2.428547 5.437383 550.9171 6.926604e-12 8.338939e-08
-    ## CCL20   -3.148348 4.954443 439.2325 2.844676e-11 1.712353e-07
-    ## IL36G   -2.735768 4.363013 337.4198 1.457035e-10 5.847081e-07
-    ## INHBA   -1.824524 6.515687 281.8119 4.409698e-10 1.327209e-06
-    ## TNFAIP3 -1.616961 7.423374 263.4705 6.656878e-10 1.402408e-06
-    ## S100A8  -1.874937 7.002240 261.3774 6.989326e-10 1.402408e-06
-    ## SPRR2D  -2.987439 4.799468 235.3902 1.323171e-09 1.664161e-06
-    ## KRT6B   -1.554505 7.717157 233.0541 1.405871e-09 1.664161e-06
-    ## CFB     -1.860295 5.886829 232.5585 1.424173e-09 1.664161e-06
-    ## SAA1    -2.227962 7.957975 229.8871 1.527717e-09 1.664161e-06
+    ## Coefficient:  -1*mock_NHBE 1*covid_NHBE 
+    ##            logFC   logCPM        F       PValue          FDR
+    ## SAA2    2.428547 5.437383 550.9171 6.926604e-12 8.338939e-08
+    ## CCL20   3.148348 4.954443 439.2325 2.844676e-11 1.712353e-07
+    ## IL36G   2.735768 4.363013 337.4198 1.457035e-10 5.847081e-07
+    ## INHBA   1.824524 6.515687 281.8119 4.409698e-10 1.327209e-06
+    ## TNFAIP3 1.616961 7.423374 263.4705 6.656878e-10 1.402408e-06
+    ## S100A8  1.874937 7.002240 261.3774 6.989326e-10 1.402408e-06
+    ## SPRR2D  2.987439 4.799468 235.3902 1.323171e-09 1.664161e-06
+    ## KRT6B   1.554505 7.717157 233.0541 1.405871e-09 1.664161e-06
+    ## CFB     1.860295 5.886829 232.5585 1.424173e-09 1.664161e-06
+    ## SAA1    2.227962 7.957975 229.8871 1.527717e-09 1.664161e-06
 
 #### Viewing Smear plot
 
@@ -375,7 +375,7 @@ abline(h = c(-2, 2), col = "blue")
 # dge_tmm_tag.disp = estimateGLMTagwiseDisp(dge_tmm_tr.disp,design)
 fit = glmQLFit(dge_tmm_tag.disp, design)
 
-NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 GLM_Tag = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1]) # Names of DE genes
 length(GLM_Tag) # Number of DE genes
@@ -387,18 +387,18 @@ length(GLM_Tag) # Number of DE genes
 topTags(NHBE_dge, n=10) # Genes with 10 lowest pvalues
 ```
 
-    ## Coefficient:  1*mock_NHBE -1*covid_NHBE 
-    ##             logFC   logCPM        F       PValue          FDR
-    ## SAA2    -2.428547 5.437383 550.9171 6.926604e-12 8.338939e-08
-    ## CCL20   -3.148348 4.954443 439.2325 2.844676e-11 1.712353e-07
-    ## IL36G   -2.735768 4.363013 337.4198 1.457035e-10 5.847081e-07
-    ## INHBA   -1.824524 6.515687 281.8119 4.409698e-10 1.327209e-06
-    ## TNFAIP3 -1.616961 7.423374 263.4705 6.656878e-10 1.402408e-06
-    ## S100A8  -1.874937 7.002240 261.3774 6.989326e-10 1.402408e-06
-    ## SPRR2D  -2.987439 4.799468 235.3902 1.323171e-09 1.664161e-06
-    ## KRT6B   -1.554505 7.717157 233.0541 1.405871e-09 1.664161e-06
-    ## CFB     -1.860295 5.886829 232.5585 1.424173e-09 1.664161e-06
-    ## SAA1    -2.227962 7.957975 229.8871 1.527717e-09 1.664161e-06
+    ## Coefficient:  -1*mock_NHBE 1*covid_NHBE 
+    ##            logFC   logCPM        F       PValue          FDR
+    ## SAA2    2.428547 5.437383 550.9171 6.926604e-12 8.338939e-08
+    ## CCL20   3.148348 4.954443 439.2325 2.844676e-11 1.712353e-07
+    ## IL36G   2.735768 4.363013 337.4198 1.457035e-10 5.847081e-07
+    ## INHBA   1.824524 6.515687 281.8119 4.409698e-10 1.327209e-06
+    ## TNFAIP3 1.616961 7.423374 263.4705 6.656878e-10 1.402408e-06
+    ## S100A8  1.874937 7.002240 261.3774 6.989326e-10 1.402408e-06
+    ## SPRR2D  2.987439 4.799468 235.3902 1.323171e-09 1.664161e-06
+    ## KRT6B   1.554505 7.717157 233.0541 1.405871e-09 1.664161e-06
+    ## CFB     1.860295 5.886829 232.5585 1.424173e-09 1.664161e-06
+    ## SAA1    2.227962 7.957975 229.8871 1.527717e-09 1.664161e-06
 
 #### Viewing Smear plot
 
@@ -431,7 +431,7 @@ dge1 = estimateDisp(dge_rle,design, robust = T)
 
 fit = glmQLFit(dge1, design)
 
-NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 
@@ -456,7 +456,7 @@ dge1 = estimateDisp(dge_uq,design, robust = T)
 
 fit = glmQLFit(dge1, design)
 
-NHBE_dge = glmQLFTest(fit, contrast=c(1,-1))
+NHBE_dge = glmQLFTest(fit, contrast=c(-1,1))
 
 NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 
