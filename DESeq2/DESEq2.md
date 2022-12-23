@@ -192,7 +192,7 @@ plotMA(dge_NHBE_shrink, ylim=c(-2,2))
 ### Transforming data and Viewing PCA plot
 
 ``` r
-# data needs to be transformed before PCA to mthematically remove sources of unwanted variations
+# data needs to be transformed before PCA to mathematically remove sources of unwanted variations
 transformed = rlog(dds_NHBE, blind=FALSE)
 plotPCA(transformed)
 ```
