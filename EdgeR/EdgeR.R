@@ -100,7 +100,7 @@ colnames(design) = levels(dge_tmm$samples$group)
 dge_tmm.disp = estimateDisp(dge_tmm, design, robust = T)
 
 # Viewing BCV plot
-plotBCV(dge_tmm.disp) # Note there is a downward trend in coefficient of variation as cpm increases, so using common dispersion may not be appropriate
+plotBCV(dge_tmm.disp)
 
 
 #GLM dispersion estimates
@@ -113,7 +113,7 @@ plotBCV(dge_tmm_tag.disp)
 
 #DGE Using different dispersion methods
  
-# dge_tmm.disp = estimateDisp(dge_tmm, design, verbose=T, robust = T)
+# dge_tmm.disp = estimateDisp(dge_tmm, design, robust = T)
 fit = glmQLFit(dge_tmm.disp, design)
 
 #Viewing pairwise NHBE Mock vs Cov
