@@ -123,7 +123,8 @@ NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 EstDisp = row.names(NHBE_dge_list[NHBE_dge_list!= 0,1,1])
 sum(abs(NHBE_dge_list))
 
-write.csv(NHBE_dge$table, file = "EdgeR_TMM_DEGs.csv")
+EdgeR_TMM_DEGs = NHBE_dge$table[rownames(NHBE_dge$table) %in% EstDisp,]
+write.csv(EdgeR_TMM_DEGs, file = "data/EdgeR_TMM_DEGs.csv")
 
 # dge_tmm_tr.disp = estimateGLMTrendedDisp(dge_tmm_c.disp,design, method="bin.spline")
 fit = glmQLFit(dge_tmm_tr.disp, design)
@@ -170,7 +171,9 @@ NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 RLE = rownames(dge1)[as.logical(NHBE_dge_list)]
 length(RLE) # number of DEGs
 
-write.csv(NHBE_dge$table, file = "EdgeR_RLE_DEGs.csv")
+EdgeR_RLE_DEGs = NHBE_dge$table[rownames(NHBE_dge$table) %in% RLE,]
+write.csv(EdgeR_RLE_DEGs, file = "data/EdgeR_RLE_DEGs.csv")
+
 
 plotSmear(NHBE_dge, de.tags=RLE)
 abline(h = c(-2, 2), col = "blue")
@@ -185,7 +188,8 @@ NHBE_dge_list = decideTestsDGE(NHBE_dge, adjust.method="BH", p.value=0.05)
 UQ = rownames(dge1)[as.logical(NHBE_dge_list)]
 length(UQ) # number of DEGs
 
-write.csv(NHBE_dge$table, file = "EdgeR_UQ_DEGs.csv")
+EdgeR_UQ_DEGs = NHBE_dge$table[rownames(NHBE_dge$table) %in% UQ,]
+write.csv(EdgeR_UQ_DEGs, file = "data/EdgeR_UQ_DEGs.csv")
 
 plotSmear(NHBE_dge, de.tags=UQ)
 abline(h = c(-2, 2), col = "blue")
