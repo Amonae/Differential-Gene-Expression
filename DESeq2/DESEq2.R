@@ -1,13 +1,13 @@
 library(DESeq2)
 BiocManager::install("apeglm")
 
-head(GSE_data[,1:8])
+head(GSEA_data[,1:8])
 head(coldata)
 coldata$condition = factor(coldata$condition, levels = c("mock", "covid"))
 
 # Doing DGE analysis for only NHBE cells 
 
-dds_NHBE = DESeqDataSetFromMatrix(countData = GSE_data[,1:6],
+dds_NHBE = DESeqDataSetFromMatrix(countData = GSEA_data[,1:6],
                                   colData = coldata[1:6,],
                                   design = ~ condition)    # Creating DESeq dataset
 
@@ -15,7 +15,7 @@ dds_NHBE = DESeqDataSetFromMatrix(countData = GSE_data[,1:6],
 dds_NHBE = DESeq(dds_NHBE)   # Calling DESeq function
 
 #Results object
-dge_NHBE = results(dds_NHBE)
+dge_NHBE = results(dds_NHBE, alpha = 0.05, lfcThreshold = 0)
 dge_NHBE    # Note that the LFC is based on covid vs mock. So positive values represent genes that are upregulated in cells with covid
 
 
@@ -47,5 +47,6 @@ rld = rlog(dds, blind=FALSE)
 plotPCA(rld)
 
 ## Saving results to csv
-dge_NHBE = data.frame(dge_NHBE)
-write.csv(dge_NHBE, file = "DESeq2_DEGs.csv")
+DESeq2 = data.frame(dge_NHBE_shrink)
+write.csv(DESeq2, file = "data/DESeq2_DEGs.csv")
+
