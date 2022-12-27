@@ -5,6 +5,11 @@ Drives Development of COVID-19"](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC72
 
 [GEO: GSE147507](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE147507) 
 
+### Steps include
+1. Cleaning GSE data
+2. Isolating DEGs using DESeq2
+3. Isolating DEGs using EdgeR
+4. Performing GSEA
 
 ## DEG Enrichment Map Plot
  <br>  
