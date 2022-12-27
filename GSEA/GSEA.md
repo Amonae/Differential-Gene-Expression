@@ -139,6 +139,9 @@ gse = gseGO(geneList=gene_list,
 
     ## GSEA analysis...
 
+    ## Warning in fgseaMultilevel(...): For some of the pathways the P-values were
+    ## likely overestimated. For such pathways log2err is set to NA.
+
     ## leading edge analysis...
 
     ## done...
@@ -149,17 +152,10 @@ gse = gseGO(geneList=gene_list,
 require(DOSE)
 ```
 
-    ## Loading required package: DOSE
-
     ## Warning: package 'DOSE' was built under R version 4.1.2
 
-    ## DOSE v3.20.1  For help: https://yulab-smu.top/biomedical-knowledge-mining-book/
-    ## 
-    ## If you use DOSE in published research, please cite:
-    ## Guangchuang Yu, Li-Gen Wang, Guang-Rong Yan, Qing-Yu He. DOSE: an R/Bioconductor package for Disease Ontology Semantic and Enrichment analysis. Bioinformatics 2015, 31(4):608-609
-
 ``` r
-dotplot(gse, showCategory=10, split=".sign") + facet_grid(.~.sign)
+dotplot(gse, showCategory=8, split=".sign", font.size = 8) + facet_grid(.~.sign)
 ```
 
 ![](GSEA_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
@@ -184,9 +180,9 @@ emapplot(gse_p, showCategory = 10)
 ## Ridgeplot
 
 ``` r
-ridgeplot(gse) + labs(x = "enrichment distribution")
+ridgeplot(gse, showCategory=15) + labs(x = "enrichment distribution")  + theme(axis.text.y = element_text(size = 8))
 ```
 
-    ## Picking joint bandwidth of 0.301
+    ## Picking joint bandwidth of 0.272
 
 ![](GSEA_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
